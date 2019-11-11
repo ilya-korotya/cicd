@@ -12,7 +12,59 @@
     name: jenkins
     state: present
     update_cache: yes
-- name: Run Jenkins
+- name: Configuration SSL for Jenkins connect
+  block:
+  - name: Create target directory
+    file:
+      state: directory
+      path: "{{ item }}"
+      recurse: true
+    loop:
+      - "{{ jenkins_csr_path }}"
+      - "{{ jenkins_certs_path }}"
+      - "{{ jenkins_private_key_path }}"
+  - name: Generate an OpenSSL private key.
+    openssl_privatekey:
+      path: "{{ jenkins_private_key_path }}/{{ jenkins_private_key_name }}"
+  - name: Generate an OpenSSL CSR.
+    openssl_csr:
+      path: "{{ jenkins_csr_path }}/{{ jenkins_csr_name }}"
+      privatekey_path: "{{ jenkins_private_key_path }}/{{ jenkins_private_key_name }}"
+      common_name: privkey
+  - name: Generate a Self Signed OpenSSL certificate.
+    openssl_certificate:
+      path: "{{ jenkins_certs_path }}/{{ jenkins_csr_name }}"
+      privatekey_path: "{{ jenkins_private_key_path }}/{{ jenkins_private_key_name }}"
+      csr_path: "{{ jenkins_csr_path }}/{{ jenkins_csr_name }}"
+      provider: selfsigned
+  - name: Add settings Jenkins systemd config
+    blockinfile:
+      path: "{{ jenkins_config_path }}"
+      block: |
+        JENKINS_HTTPS_PORT=8443
+        JENKINS_HTTPS_CERTIFICATE={{ jenkins_certs_path }}
+        JENKINS_PRICATE_KEY={{ jenkins_private_key_path }}
+        JENKINS_PORT=-1
+  when: "{{ jenkins_setup_ssl }}"
+- name: Start jenkins
   service:
-    name: jenkins
-    state: started
+      name: jenkins
+      state: started
+- name: Install CLI for Jenkins
+  block:
+  - name: Wait when Jenkins will run
+    wait_for:
+        host: 0.0.0.0
+        port: 8443
+        delay: 10
+  - name: Download Jenkins CLI
+    get_url:
+      dest: "{{ jenkins_home_dir }}jenkins-cli.jar"
+      url: https://0.0.0.0:8443/jnlpJars/jenkins-cli.jar
+      validate_certs: false
+  when: "{{ jenkins_cli_install }}"
+- name: Print unlock for Jenkins
+  register: admin_key
+  shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+- debug: 
+    msg: "Init Jenkins key for unlock: {{admin_key.stdout}}"

@@ -1,0 +1,11 @@
+---
+jenkins_home_dir: /home/ec2-user
+jenkins_cli_install: false
+jenkins_csr_path: /opt
+jenkins_certs_path: /etc/ssl/certs
+jenkins_private_key_path: /etc/ssl/private
+jenkins_config_path: /etc/sysconfig/jenkins
+jenkins_csr_name: jenkins.csr
+jenkins_certs_name: jenkins_certs.pem
+jenkins_private_key_name: jenkins_private_key.pem
+jenkins_setup_ssl: true
