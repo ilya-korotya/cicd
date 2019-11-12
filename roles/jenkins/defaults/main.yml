@@ -8,4 +8,7 @@ jenkins_config_path: /etc/sysconfig/jenkins
 jenkins_csr_name: jenkins.csr
 jenkins_certs_name: jenkins_certs.pem
 jenkins_private_key_name: jenkins_private_key.pem
-jenkins_setup_ssl: true
+jenkins_enable_ssl: true
+jenkins_user_ssl_private_key: ""
+jenkins_user_sll_certificate: ""
+jenkins_https_port: 8443

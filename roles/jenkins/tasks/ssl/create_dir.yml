@@ -1,0 +1,10 @@
+---
+- name: Create target directory
+  file:
+    state: directory
+    path: "{{ item }}"
+    recurse: true
+  loop:
+  - "{{ jenkins_csr_path }}"
+  - "{{ jenkins_certs_path }}"
+  - "{{ jenkins_private_key_path }}"

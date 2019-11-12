@@ -1,0 +1,9 @@
+---
+- name: Copy SSL private key
+  copy:
+    src: "{{ jenkins_user_ssl_private_key }}"
+    dest: "{{ jenkins_private_key_path }}/{{ jenkins_private_key_name }}"
+- name: Copy SSL certificate
+  copy:
+    src: "{{ jenkins_user_sll_certificate }}"
+    dest: "{{ jenkins_certs_path }}/{{ jenkins_certs_name }}"

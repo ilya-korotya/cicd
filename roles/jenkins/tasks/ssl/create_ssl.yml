@@ -1,0 +1,14 @@
+---
+- name: Generate an OpenSSL private key.
+  openssl_privatekey:
+    path: "{{ jenkins_private_key_path }}/{{ jenkins_private_key_name }}"
+- name: Generate an OpenSSL CSR.
+  openssl_csr:
+    path: "{{ jenkins_csr_path }}/{{ jenkins_csr_name }}"
+    privatekey_path: "{{ jenkins_private_key_path }}/{{ jenkins_private_key_name }}"
+- name: Generate a Self Signed OpenSSL certificate.
+  openssl_certificate:
+    path: "{{ jenkins_certs_path }}/{{ jenkins_certs_name }}"
+    privatekey_path: "{{ jenkins_private_key_path }}/{{ jenkins_private_key_name }}"
+    csr_path: "{{ jenkins_csr_path }}/{{ jenkins_csr_name }}"
+    provider: selfsigned
