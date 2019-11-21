@@ -12,3 +12,4 @@ jenkins_enable_ssl: true
 jenkins_user_ssl_private_key: ""
 jenkins_user_sll_certificate: ""
 jenkins_https_port: 8443
+jenkins_http_port: -1

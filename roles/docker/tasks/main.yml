@@ -1,0 +1,3 @@
+---
+- name: Install Docker for target system
+  include: "setup{{ ansible_facts['os_family'] }}.yml" 

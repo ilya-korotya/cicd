@@ -1,0 +1,41 @@
+---
+- name: Remove old Docker version
+  yum:
+    name: "{{ item }}"
+    state: absent
+  loop:
+    - docker 
+    - docker-client 
+    - docker-client-latest 
+    - docker-common 
+    - docker-latest 
+    - docker-latest-logrotate 
+    - docker-logrotate 
+    - docker-engine
+- name: Install software dependency for Docker
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+- name: Add repository with Docker to OS
+  shell:  yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+- name: Install Docker
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - docker-ce  
+    - docker-ce-cli
+    - containerd.io
+- name: Restart Docker
+  service:
+    name: docker
+    state: restarted
+- name: Add current user to Docker group
+  user:
+    name: "{{ ansible_ssh_user }}"
+    group: docker
+    append: yes

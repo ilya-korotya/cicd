@@ -1,0 +1,44 @@
+---
+- name: Uninstall old version docker
+  apt:
+    name: "{{ item }}"
+    state: absent
+  loop:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg-agent
+    - software-properties-common
+- name: Install software dependency
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg-agent
+    - software-properties-common
+- name: Add apt key Docker
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+- name: Add Docker to apt repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+- name: Install docker
+  apt:
+    name: "docker-ce"
+    state: present
+    update_cache: yes
+- name: Restart docker
+  service:
+    name: docker
+    state: restarted
+- name: Add current user to docker group
+  user:
+    name: "{{ ansible_ssh_user }}"
+    group: docker
+    append: yes

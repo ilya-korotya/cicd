@@ -2,16 +2,29 @@
 - name: Set local variables
   set_fact:
     _protocol: "http"
-- name: Add Jenkins repository
-  yum_repository:
-    name: jenkins
-    description: Add Jenkins repo to yum manager
-    baseurl: http://pkg.jenkins-ci.org/redhat
-- name: Add rpm key for Jenkins repository
-  rpm_key:
-    key: https://jenkins-ci.org/redhat/jenkins-ci.org.key
+- name: Add Jenkins for RedHat
+  block:
+    - name: Add Jenkins repository for RedHat
+      yum_repository:
+        name: jenkins
+        description: Add Jenkins repo for yum manager
+        baseurl: http://pkg.jenkins-ci.org/redhat
+    - name: Add rpm key for Jenkins repository for RedHat
+      rpm_key:
+        key: https://jenkins-ci.org/redhat/jenkins-ci.org.key
+  when: ansible_facts['os_family'] == "RedHat"
+- name: Add Jenkins for Debian
+  block:
+    - name: Add Jenkins repository key for Debian
+      apt_key:
+        url: https://pkg.jenkins.io/debian/jenkins.io.key
+    - name: Add Jenkins repository for Debian
+      apt_repository:
+        repo: deb https://pkg.jenkins.io/debian-stable binary/
+        filename: jenkins
+  when: ansible_facts['os_family'] == "Debian"
 - name: Install Jenkins
-  yum:
+  package:
     name: jenkins
     state: present
     update_cache: yes
@@ -25,14 +38,14 @@
       when: "{{ jenkins_user_ssl_private_key == '' or jenkins_user_sll_certificate == '' }}"
     - include: ./ssl/upload_ssl.yml
       when: "{{ jenkins_user_ssl_private_key != '' and jenkins_user_sll_certificate != '' }}"
-    - name: Add settings Jenkins systemd config
+    - name: Add settings Jenkins systemd config  
       blockinfile:
         marker: "# {mark} ANSIBLE MANAGED BLOCK FOR SSL"
         path: "{{ jenkins_config_path }}"
         block: |
-            JENKINS_HTTPS_PORT={{ jenkins_https_port }}
+            JENKINS_ARGS="--httpPort={{ jenkins_http_port }} --httpsPort={{ jenkins_https_port }}"
             JENKINS_HTTPS_CERTIFICATE={{ jenkins_certs_path }}/{{ jenkins_certs_name }}
-            JENKINS_PRICATE_KEY={{ jenkins_private_key_path }}/{{ jenkins_private_key_name }}
+            JENKINS_PRIVATE_KEY={{ jenkins_private_key_path }}/{{ jenkins_private_key_name }}
   when: "{{ jenkins_enable_ssl }}"
 - name: Upload user Jenkins config
   blockinfile:
@@ -42,23 +55,21 @@
   service:
       name: jenkins
       state: restarted
-- name: Install CLI for Jenkins
-  block:
-  - name: Wait when Jenkins will run
-    uri:
-      url: "{{ _protocol }}://0.0.0.0:{{ jenkins_https_port }}/jnlpJars/jenkins-cli.jar"
-      return_content: false
-      status_code: 200
-      validate_certs: no
-    register: response
-    until: response.status == 200
-    retries: 40
-    delay: 15
-  - name: Download Jenkins CLI
-    get_url:
-      dest: "{{ jenkins_home_dir }}/jenkins-cli.jar"
-      url: "{{ _protocol }}://0.0.0.0:{{ jenkins_https_port }}/jnlpJars/jenkins-cli.jar"
-      validate_certs: no
+- name: Wait when Jenkins will run
+  uri:
+    url: "{{ _protocol }}://0.0.0.0:{{ jenkins_https_port }}/jnlpJars/jenkins-cli.jar"
+    return_content: false
+    status_code: 200
+    validate_certs: no
+  register: response
+  until: response.status == 200
+  retries: 40
+  delay: 15
+- name: Download Jenkins CLI
+  get_url:
+    dest: "{{ jenkins_home_dir }}/jenkins-cli.jar"
+    url: "{{ _protocol }}://0.0.0.0:{{ jenkins_https_port }}/jnlpJars/jenkins-cli.jar"
+    validate_certs: no
   when: "{{ jenkins_cli_install }}"
 - name: Save Jenkins unlock key
   register: admin_key

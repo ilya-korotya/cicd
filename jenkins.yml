@@ -4,6 +4,11 @@
   become: yes
   become_user: root
 
+  vars:
+    docker_install: true
+
   roles:
+    - os
     - java
     - jenkins
+    - { role: docker, when: docker_install }

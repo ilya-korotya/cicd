@@ -1,6 +1,14 @@
 ---
+- name: Java package for Debian
+  set_fact:
+    java_version: openjdk-8-jdk 
+  when: ansible_facts['os_family'] == "Debian"
+- name: Java package for RedHat
+  set_fact:
+    java_version: java-1.8.0-openjdk
+  when: ansible_facts['os_family'] == "RedHat"
 - name: Install Java 8
-  yum:
-    name: java-1.8.0-openjdk
+  package:
+    name: "{{ java_version }}"
     state: present
     update_cache: yes
