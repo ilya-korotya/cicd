@@ -1,5 +1,5 @@
 ---
-- name: Remove old Docker version
+- name: Remove old Docker version in RedHat
   yum:
     name: "{{ item }}"
     state: absent
@@ -12,7 +12,7 @@
     - docker-latest-logrotate 
     - docker-logrotate 
     - docker-engine
-- name: Install software dependency for Docker
+- name: Install software dependency for Docker in RedHat
   yum:
     name: "{{ item }}"
     state: present
@@ -20,9 +20,9 @@
     - yum-utils
     - device-mapper-persistent-data
     - lvm2
-- name: Add repository with Docker to OS
+- name: Add repository with Docker to OS in RedHat
   shell:  yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-- name: Install Docker
+- name: Install Docker in RedHat
   yum:
     name: "{{ item }}"
     state: present
@@ -30,11 +30,11 @@
     - docker-ce  
     - docker-ce-cli
     - containerd.io
-- name: Restart Docker
+- name: Restart Docker in RedHat
   service:
     name: docker
     state: restarted
-- name: Add current user to Docker group
+- name: Add current user to Docker group in RedHat
   user:
     name: "{{ ansible_ssh_user }}"
     group: docker
