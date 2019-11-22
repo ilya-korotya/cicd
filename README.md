@@ -1,9 +1,24 @@
-# Setup CI/CD via ansible. terraform and Jenkins
+# Setup Jenkins
 
-### How to use it?
+## Ansible script to help install Jenkins on the target server
 
-1. Add ssl certificate for SSH connect to `~/.ssh/`;
-2. Run ansible palybook:
+### How it use?
+
+1. Install `ansible` and `ansible-playbook`;
+2. Run command (By default will use SSL certificate):
 ```
-ansible-playbook jenkins.yml  -i 52.57.142.122,
+  ansible-playbook -i <YOUR_IP_ADDRESS>, jenkins.yml
 ```
+
+### How configuration Jenkins?
+1. You can use `roles/jenkins/defaults/main.yml` for configuration `defaults path to Jenkins`, `SSL/TLS certificates` and `Jenkins HTTP/HTTPS ports`
+   For example. If you want use yourslef own `SSL/TLS certificates` set variables:
+   ```
+    jenkins_user_ssl_private_key: ~/.ssh/My_private_key
+    jenkins_user_ssl_certificate: ~/.ssh/My_ssl_certificate
+   ```
+   or use `ansible` external variables;
+2. For other settings you mast use `roles/jenkins/files/jenkins.env` file.
+
+### What systems can I use?
+This `ansible` script has been tested on `CentOS 7` and `Ubuntu 16.04-18.04`. But you can use `Debian` and `RedHat` family systems.

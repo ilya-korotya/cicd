@@ -35,9 +35,9 @@
         _protocol: "https"
     - include: ./ssl/create_dir.yml
     - include: ./ssl/create_ssl.yml
-      when: "{{ jenkins_user_ssl_private_key == '' or jenkins_user_sll_certificate == '' }}"
+      when: "{{ jenkins_user_ssl_private_key == '' or jenkins_user_ssl_certificate == '' }}"
     - include: ./ssl/upload_ssl.yml
-      when: "{{ jenkins_user_ssl_private_key != '' and jenkins_user_sll_certificate != '' }}"
+      when: "{{ jenkins_user_ssl_private_key != '' and jenkins_user_ssl_certificate != '' }}"
     - name: Add settings Jenkins systemd config  
       blockinfile:
         marker: "# {mark} ANSIBLE MANAGED BLOCK FOR SSL"

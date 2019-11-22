@@ -9,7 +9,7 @@ jenkins_csr_name: jenkins.csr
 jenkins_certs_name: jenkins_certs.pem
 jenkins_private_key_name: jenkins_private_key.pem
 jenkins_enable_ssl: true
-jenkins_user_ssl_private_key: ""
-jenkins_user_sll_certificate: ""
+jenkins_user_ssl_private_key: "" # Path to external private key
+jenkins_user_ssl_certificate: "" # Path to external ssl certificate
 jenkins_https_port: 8443
 jenkins_http_port: -1
