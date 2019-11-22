@@ -1,6 +1,6 @@
 # Setup Jenkins
 
-## Ansible script to help install Jenkins on the target server
+### Ansible script to help install Jenkins on the target server
 
 ### How it use?
 
