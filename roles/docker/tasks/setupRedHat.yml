@@ -38,4 +38,5 @@
   user:
     name: "{{ ansible_ssh_user }}"
     group: docker
-    append: yes
+    append: yes 
+  ignore_errors: yes

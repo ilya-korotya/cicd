@@ -1,4 +1,27 @@
 ---
+- name: Install software dependecy for RedHat
+  block:
+  - name: Install init scripts
+    yum:
+      name: initscripts
+      state: present
+  - name: Install epel-release
+    yum:
+      name: epel-release
+      state: present
+  when: "{{ ansible_os_family == 'RedHat' }}"
+- name: Install software dependecy for Debian
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg-agent
+    - software-properties-common
+  when: "{{ ansible_os_family == 'Debian' }}"
 - name: Install pip
   package:
     name: python-pip

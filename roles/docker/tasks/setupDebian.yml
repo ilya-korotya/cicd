@@ -9,16 +9,6 @@
     - docker.io
     - containerd
     - runc
-- name: Install software dependency in Debian
-  apt:
-    name: "{{ item }}"
-    state: present
-  loop:
-    - apt-transport-https
-    - ca-certificates
-    - curl
-    - gnupg-agent
-    - software-properties-common
 - name: Add apt key Docker in Debian
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
@@ -41,3 +31,4 @@
     name: "{{ ansible_ssh_user }}"
     group: docker
     append: yes
+  ignore_errors: yes

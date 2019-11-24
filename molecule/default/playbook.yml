@@ -1,0 +1,15 @@
+---
+- name: Converge
+  hosts: all
+  become: yes
+  become_user: root
+
+  vars:
+    docker_install: true
+    jenkins_config_path: "{{ '/etc/sysconfig/jenkins' if ansible_facts['os_family'] == 'RedHat' else '/etc/default/jenkins' }}"
+  
+  roles:
+    - /home/illia/jenkins/roles/os
+    - /home/illia/jenkins/roles/java
+    - /home/illia/jenkins/roles/jenkins
+    - { role: /home/illia/jenkins/roles/docker, when: docker_install }

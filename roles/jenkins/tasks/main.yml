@@ -22,6 +22,7 @@
       apt_repository:
         repo: deb https://pkg.jenkins.io/debian-stable binary/
         filename: jenkins
+        update_cache: no # cannot update chache inside docker (for molecule)
   when: ansible_facts['os_family'] == "Debian"
 - name: Install Jenkins
   package:
