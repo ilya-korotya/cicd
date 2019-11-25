@@ -1,0 +1,22 @@
+dist: bionic
+
+services:
+  - docker
+
+before_install:
+  - sudo apt-get update
+  # install ansible and dependency
+  - sudo apt-get -y install software-properties-common
+  - sudo apt-add-repository --yes --update ppa:ansible/ansible
+  - sudo apt-get install ansible
+  # install molecule and dependency
+  - sudo apt-get -y install libssl-dev
+  - sudo python -m pip install -U pip
+  - sudo python -m easy_install --upgrade pyOpenSSL
+  - sudo pip install --user molecule
+  - sudo pip install docker
+  # add users binaries to PATH
+  - export PATH=$PATH:/home/travis/.local/bin
+  - sudo cp /home/travis/.local/bin/* /usr/bin
+script:
+  - sudo /usr/bin/molecule converge
