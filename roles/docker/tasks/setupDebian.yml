@@ -28,7 +28,7 @@
     state: restarted
 - name: Add current user to docker group in Debian
   user:
-    name: "{{ ansible_ssh_user }}"
+    name: "{{ ansible_ssh_user|default(ansible_user_id) }}"
     group: docker
     append: yes
   ignore_errors: yes

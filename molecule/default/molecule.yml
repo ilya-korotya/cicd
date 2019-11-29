@@ -20,6 +20,8 @@ platforms:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
 provisioner:
   name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: $PWD/roles
   lint:
     name: ansible-lint
     enabled: false
